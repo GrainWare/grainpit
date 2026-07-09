@@ -9,12 +9,11 @@ use axum::{
     response::{Html, IntoResponse, Response},
     routing::get,
 };
-use rand::{
-    RngExt,
-    distr::{Alphanumeric, SampleString},
-    rng,
-};
+use rand::distr::{Alphanumeric, SampleString};
+use tracing::info_span;
+use tracing_subscriber::fmt::format::FmtSpan;
 
+#[derive(Debug)]
 struct AppState {
     markov1: Chain<String>,
     markov2: Chain<String>,
@@ -23,12 +22,17 @@ struct AppState {
 
 #[tokio::main]
 async fn main() {
+    tracing_subscriber::fmt()
+        .with_span_events(FmtSpan::CLOSE)
+        .with_max_level(tracing::Level::DEBUG)
+        .init();
+
     let mut chain1 = Chain::new();
     let mut chain2 = Chain::new();
     let mut chain3 = Chain::new();
 
     let mut lines = include_str!("markov1.txt").lines();
-    while let Some(line) = lines.next() {
+    while let Some(_) = lines.next() {
         let mut buffer = String::new();
         for _ in 0..512 {
             if let Some(next_line) = lines.next() {
@@ -39,7 +43,7 @@ async fn main() {
     }
 
     let mut lines = include_str!("markov3.txt").lines();
-    while let Some(line) = lines.next() {
+    while let Some(_) = lines.next() {
         let mut buffer = String::new();
         for _ in 0..50 {
             if let Some(next_line) = lines.next() {
@@ -78,12 +82,16 @@ async fn wildcard_handler(
     if path.len() == 69 {
         handler(State(state)).await.into_response()
     } else {
-        let mut a = state.markov3.generate_str();
-        a = a.trim_start().to_owned();
-        a.into_response()
+        let span = info_span!("wildcard_handler");
+        span.in_scope(|| {
+            let mut a = state.markov3.generate_str();
+            a = a.trim_start().to_owned();
+            a.into_response()
+        })
     }
 }
 
+#[tracing::instrument(skip_all)]
 async fn handler(State(state): State<Arc<AppState>>) -> Html<String> {
     let mut fakeurls = String::new();
     for _ in 0..8 {
