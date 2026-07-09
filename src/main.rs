@@ -23,7 +23,7 @@ async fn main() {
     let mut lines = include_str!("markov1.txt").lines();
     while let Some(line) = lines.next() {
         let mut buffer = String::new();
-        for _ in 0..512 {
+        for _ in 0..1024 {
             if let Some(next_line) = lines.next() {
                 buffer = buffer + "<br>" + next_line;
             }
