@@ -3,7 +3,12 @@ pub mod markov;
 use std::sync::Arc;
 
 use crate::markov::Chain;
-use axum::{Router, extract::State, response::Html, routing::get};
+use axum::{
+    Router,
+    extract::{Path, State},
+    response::{Html, IntoResponse, Response},
+    routing::get,
+};
 use rand::{
     RngExt,
     distr::{Alphanumeric, SampleString},
@@ -13,22 +18,35 @@ use rand::{
 struct AppState {
     markov1: Chain<String>,
     markov2: Chain<String>,
+    markov3: Chain<String>,
 }
 
 #[tokio::main]
 async fn main() {
     let mut chain1 = Chain::new();
     let mut chain2 = Chain::new();
+    let mut chain3 = Chain::new();
 
     let mut lines = include_str!("markov1.txt").lines();
     while let Some(line) = lines.next() {
         let mut buffer = String::new();
-        for _ in 0..1024 {
+        for _ in 0..512 {
             if let Some(next_line) = lines.next() {
                 buffer = buffer + "<br>" + next_line;
             }
         }
         chain1.feed_str(&buffer.to_owned());
+    }
+
+    let mut lines = include_str!("markov3.txt").lines();
+    while let Some(line) = lines.next() {
+        let mut buffer = String::new();
+        for _ in 0..50 {
+            if let Some(next_line) = lines.next() {
+                buffer = buffer + "\n" + next_line;
+            }
+        }
+        chain3.feed_str(&buffer.to_owned());
     }
 
     for line in include_str!("markov2.txt").lines() {
@@ -38,10 +56,11 @@ async fn main() {
     let shared_state = Arc::new(AppState {
         markov1: chain1,
         markov2: chain2,
+        markov3: chain3,
     });
     let app = Router::new()
         .route("/", get(handler))
-        .route("/{*wildcard}", get(handler))
+        .route("/{*wildcard}", get(wildcard_handler))
         .with_state(shared_state);
 
     // run it
@@ -52,12 +71,25 @@ async fn main() {
     axum::serve(listener, app).await.unwrap();
 }
 
+async fn wildcard_handler(
+    State(state): State<Arc<AppState>>,
+    Path(path): Path<String>,
+) -> Response {
+    if path.len() == 69 {
+        handler(State(state)).await.into_response()
+    } else {
+        let mut a = state.markov3.generate_str();
+        a = a.trim_start().to_owned();
+        a.into_response()
+    }
+}
+
 async fn handler(State(state): State<Arc<AppState>>) -> Html<String> {
     let mut fakeurls = String::new();
     for _ in 0..8 {
         fakeurls.push_str(&format!(
-            "\n<a href='/{}'>{}</a><br>",
-            Alphanumeric.sample_string(&mut rand::rng(), 512),
+            "\n<a href='/{}.html'>{}</a><br>",
+            Alphanumeric.sample_string(&mut rand::rng(), 64),
             state.markov2.generate_str()
         ));
     }
