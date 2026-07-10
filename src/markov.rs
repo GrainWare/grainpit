@@ -21,7 +21,6 @@
 #![warn(missing_docs)]
 
 use std::borrow::ToOwned;
-use std::collections::HashMap;
 use std::collections::hash_map::Entry::{Occupied, Vacant};
 use std::fs::File;
 use std::hash::Hash;
@@ -29,7 +28,7 @@ use std::io::prelude::*;
 use std::io::{BufReader, Result};
 use std::path::Path;
 
-use rand::{RngExt, rng};
+use rustc_hash::FxHashMap;
 
 /// The definition of all types that can be used in a `Chain`.
 pub trait Chainable: Eq + Hash + Clone {}
@@ -44,7 +43,7 @@ pub struct Chain<T>
 where
     T: Chainable,
 {
-    map: HashMap<Vec<Token<T>>, HashMap<Token<T>, usize>>,
+    map: FxHashMap<Vec<Token<T>>, FxHashMap<Token<T>, usize>>,
     order: usize,
 }
 
@@ -74,8 +73,8 @@ where
         assert!(order != 0);
         Chain {
             map: {
-                let mut map = HashMap::new();
-                map.insert(vec![None; order], HashMap::new());
+                let mut map = FxHashMap::default();
+                map.insert(vec![None; order], FxHashMap::default());
                 map
             },
             order,
@@ -99,9 +98,7 @@ where
         toks.extend(tokens.iter().map(|token| Some(token.clone())));
         toks.push(None);
         for p in toks.windows(self.order + 1) {
-            self.map
-                .entry(p[0..self.order].to_vec())
-                .or_default();
+            self.map.entry(p[0..self.order].to_vec()).or_default();
             self.map
                 .get_mut(&p[0..self.order])
                 .unwrap()
@@ -229,7 +226,7 @@ trait States<T: PartialEq> {
     fn next(&self) -> Token<T>;
 }
 
-impl<T> States<T> for HashMap<Token<T>, usize>
+impl<T> States<T> for FxHashMap<Token<T>, usize>
 where
     T: Chainable,
 {
@@ -247,8 +244,7 @@ where
         for &value in self.values() {
             sum += value;
         }
-        let mut rng = rng();
-        let cap = rng.random_range(0..sum);
+        let cap = fastrand::usize(0..sum);
         sum = 0;
         for (key, &value) in self.iter() {
             sum += value;

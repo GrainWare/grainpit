@@ -31,31 +31,37 @@ async fn main() {
     let mut chain2 = Chain::new();
     let mut chain3 = Chain::new();
 
-    let mut lines = include_str!("markov1.txt").lines();
-    while let Some(_) = lines.next() {
-        let mut buffer = String::new();
-        for _ in 0..512 {
-            if let Some(next_line) = lines.next() {
-                buffer = buffer + "<br>" + next_line;
+    info_span!("train_markov1").in_scope(|| {
+        let mut lines = include_str!("markov1.txt").lines();
+        while let Some(_) = lines.next() {
+            let mut buffer = String::new();
+            for _ in 0..512 {
+                if let Some(next_line) = lines.next() {
+                    buffer = buffer + "\n" + next_line;
+                }
             }
+            chain1.feed_str(&buffer.to_owned());
         }
-        chain1.feed_str(&buffer.to_owned());
-    }
+    });
 
-    let mut lines = include_str!("markov3.txt").lines();
-    while let Some(_) = lines.next() {
-        let mut buffer = String::new();
-        for _ in 0..50 {
-            if let Some(next_line) = lines.next() {
-                buffer = buffer + "\n" + next_line;
+    info_span!("train_markov2").in_scope(|| {
+        for line in include_str!("markov2.txt").lines() {
+            chain2.feed_str(line);
+        }
+    });
+
+    info_span!("train_markov3").in_scope(|| {
+        let mut lines = include_str!("markov3.txt").lines();
+        while let Some(_) = lines.next() {
+            let mut buffer = String::new();
+            for _ in 0..50 {
+                if let Some(next_line) = lines.next() {
+                    buffer = buffer + "\n" + next_line;
+                }
             }
+            chain3.feed_str(&buffer.to_owned());
         }
-        chain3.feed_str(&buffer.to_owned());
-    }
-
-    for line in include_str!("markov2.txt").lines() {
-        chain2.feed_str(line);
-    }
+    });
 
     let shared_state = Arc::new(AppState {
         markov1: chain1,
@@ -82,8 +88,7 @@ async fn wildcard_handler(
     if path.len() == 69 {
         handler(State(state)).await.into_response()
     } else {
-        let span = info_span!("wildcard_handler");
-        span.in_scope(|| {
+        info_span!("wildcard_handler").in_scope(|| {
             let mut a = state.markov3.generate_str();
             a = a.trim_start().to_owned();
             a.into_response()
