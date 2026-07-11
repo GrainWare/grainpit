@@ -15,9 +15,9 @@ use tracing_subscriber::fmt::format::FmtSpan;
 
 #[derive(Debug)]
 struct AppState {
-    markov1: Chain<String>,
-    markov2: Chain<String>,
-    markov3: Chain<String>,
+    markov1: Chain,
+    markov2: Chain,
+    markov3: Chain,
 }
 
 #[tokio::main]
@@ -27,9 +27,9 @@ async fn main() {
         .with_max_level(tracing::Level::DEBUG)
         .init();
 
-    let mut chain1 = Chain::new();
-    let mut chain2 = Chain::new();
-    let mut chain3 = Chain::new();
+    let mut chain1 = Chain::default();
+    let mut chain2 = Chain::default();
+    let mut chain3 = Chain::default();
 
     info_span!("train_markov1").in_scope(|| {
         let mut lines = include_str!("markov1.txt").lines();
@@ -40,13 +40,13 @@ async fn main() {
                     buffer = buffer + "\n" + next_line;
                 }
             }
-            chain1.feed_str(&buffer.to_owned());
+            chain1.train(&buffer.to_owned());
         }
     });
 
     info_span!("train_markov2").in_scope(|| {
         for line in include_str!("markov2.txt").lines() {
-            chain2.feed_str(line);
+            chain2.train(line);
         }
     });
 
@@ -59,7 +59,7 @@ async fn main() {
                     buffer = buffer + "\n" + next_line;
                 }
             }
-            chain3.feed_str(&buffer.to_owned());
+            chain3.train(&buffer.to_owned());
         }
     });
 
@@ -89,7 +89,7 @@ async fn wildcard_handler(
         handler(State(state)).await.into_response()
     } else {
         info_span!("wildcard_handler").in_scope(|| {
-            let mut a = state.markov3.generate_str();
+            let mut a = state.markov3.generate(512);
             a = a.trim_start().to_owned();
             a.into_response()
         })
@@ -103,13 +103,13 @@ async fn handler(State(state): State<Arc<AppState>>) -> Html<String> {
         fakeurls.push_str(&format!(
             "\n<a href='/{}.html'>{}</a><br>",
             Alphanumeric.sample_string(&mut rand::rng(), 64),
-            state.markov2.generate_str()
+            state.markov2.generate(16)
         ));
     }
 
     Html(format!(
         "<h1>This is my website and it is Amazing!!</h1>\n{}\n<p>{}</p>",
         fakeurls,
-        state.markov1.generate_str()
+        state.markov1.generate(4096)
     ))
 }
