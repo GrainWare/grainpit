@@ -74,9 +74,11 @@ async fn main() {
         .with_state(shared_state);
 
     // run it
-    let listener = tokio::net::TcpListener::bind("127.0.0.1:5000")
-        .await
-        .unwrap();
+    let listener = tokio::net::TcpListener::bind(
+        std::env::var("TARPIT_ADDR").unwrap_or("127.0.0.1:5000".to_string()),
+    )
+    .await
+    .unwrap();
     println!("listening on {}", listener.local_addr().unwrap());
     axum::serve(listener, app).await.unwrap();
 }
