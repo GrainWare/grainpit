@@ -17,6 +17,10 @@ grainpit is designed to be
 
 the server i am running this on has 2gb ram and 2 cores and most of those resources are used by varnish and haproxy, so this should be able to run on almost anything, if you experience slowdowns you should implement rate limits on your reverse proxies end
 
+if you need to change the ip/port that grainpit binds to you can use the TARPIT_ADDR variable, the default is `127.0.0.1:5000`
+
+### systemd/bare metal
+
 install this using `cargo install --path .`
 
 example systemd service:
@@ -34,6 +38,12 @@ Restart=always
 WantedBy=default.target
 RequiredBy=network.target
 ```
+
+### docker/podman
+
+theres a docker compose for this that you can use, run `docker compose up -d --build` and tarpit will start running at 127.0.0.1:5000
+
+### haproxy example
 
 im using haproxy as my reverse proxy, you can probably do similar with other reverse proxies, here is an example based on my haproxy config:
 
@@ -71,4 +81,4 @@ backend evil_bot_punishment_zone
     server tarpit localhost:5000 check
 ```
 
-i also recommend combining this with https://github.com/ai-robots-txt/ai.robots.txt/ and other things to provide better matching
+i also recommend combining this with <https://github.com/ai-robots-txt/ai.robots.txt/> to provide better matching

@@ -1,0 +1,9 @@
+services:
+  tarpit:
+    container_name: tarpit
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Containerfile
+    ports:
+      - 127.0.0.1:5000:5000
