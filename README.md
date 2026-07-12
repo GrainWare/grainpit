@@ -70,3 +70,5 @@ backend evil_bot_punishment_zone
     timeout queue 5s
     server tarpit localhost:5000 check
 ```
+
+i also recommend combining this with https://github.com/ai-robots-txt/ai.robots.txt/ and other things to provide better matching
