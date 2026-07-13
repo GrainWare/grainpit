@@ -15,7 +15,7 @@ some example rules for haproxy are included here, if you want to contribute more
 - fast and lightweight, on my low resource proxy vps (2 cores, e5-2680) it manages to hover around 2-3ms per request with 21mb ram usage while handling ~15 requests per second continuously to the tarpit without consuming enough cpu time where regular requests slow down substantially
 - batshit insane default training data that (somehow) manages to put out html/css
 - able to generate fake config files as well for the malicious credential scanning bots
-- effective, as of writing this GPTBot has been sending requests to the tarpit for nearly 2 hours straight
+- effective, as of writing this GPTBot has been sending requests to the tarpit for over 15 hours straight
 
 ## reasons you might want to use a different tarpit
 
