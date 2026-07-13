@@ -1,6 +1,6 @@
 [package]
 name = "grainpit"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2024"
 description = "tarpit to trap malicious scrapers"
 license = "CC0-1.0"
@@ -9,6 +9,7 @@ repository = "https://github.com/GrainWare/grainpit"
 [dependencies]
 axum = "0.8.9"
 rand = "0.10.2"
+regex = "1.13.0"
 rustc-hash = "2.1.3"
 tokio = { version = "1.52.3", features = ["full"] }
 tracing = "0.1.44"

@@ -22,6 +22,17 @@ some example rules for haproxy are included here, if you want to contribute more
 - not as many features as other alternatives have
 - requires reverse proxy config to send bots here
 
+## configuration
+
+if you need to change the ip/port that grainpit binds to you can use the GRAINPIT_ADDR variable, the default is `127.0.0.1:5000`
+
+you can add extra domains/subdomains that you own to drop in occasionally as links if you have the bandwidth, this may boost how good your site looks to scrapers and may also make them scrape faster
+
+in order to add these there are a few variables you can configure
+
+- `GRAINPIT_EXTRAURLS`: comma separated list like `https://example.com/,https://otherexample.com/`
+- `GRAINPIT_EXTRAURLS_CHANCE`: chance to make a link start with this in percentage (default is 5%)
+
 ## installation
 
 ### systemd/bare metal
@@ -43,8 +54,6 @@ Restart=always
 WantedBy=default.target
 RequiredBy=network.target
 ```
-
-if you need to change the ip/port that grainpit binds to you can use the GRAINPIT_ADDR variable, the default is `127.0.0.1:5000`
 
 ### docker/podman
 
