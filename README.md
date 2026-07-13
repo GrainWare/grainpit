@@ -1,27 +1,32 @@
 # grainpit
 
+![Crates.io Version](https://img.shields.io/crates/v/grainpit)
+
 markov tarpit but grain
 
-might also be able to mess with the bots that spam requests for exposed .envs because if you go to a page that isnt directly linked to in one of the tarpit pages it returns a fake config file
+keep in mind that this works different than other markov tarpits where a link to the tarpit is injected into the html, for this you need to setup reverse proxy rules to get the user here
 
-keep in mind that youll have to figure out getting the user here on your own, because i use haproxy i have a rule to automatically force users who make too
-many requests to new urls in a short period of time or who request obviously botted urls here for 24h
+some example rules for haproxy are included here, if you want to contribute more examples it would be appreciated
 
-## setup
+![image of the tarpit](example.png)
 
-grainpit is designed to be
+## features
 
-- fast
-- lightweight
-- effective
+- fast and lightweight, on my low resource proxy vps (2 cores, e5-2680) it manages to hover around 2-3ms per request with 21mb ram usage
+- batshit insane default training data that (somehow) manages to put out html/css
+- able to generate fake config files as well for the malicious credential scanning bots
+- effective, as of writing this GPTBot has been sending requests to the tarpit for nearly 2 hours straight
 
-the server i am running this on has 2gb ram and 2 cores and most of those resources are used by varnish and haproxy, so this should be able to run on almost anything, if you experience slowdowns you should implement rate limits on your reverse proxies end
+## reasons you might want to use a different tarpit
 
-if you need to change the ip/port that grainpit binds to you can use the GRAINPIT_ADDR variable, the default is `127.0.0.1:5000`
+- not as many features as other alternatives have
+- requires reverse proxy config to send bots here
+
+## installation
 
 ### systemd/bare metal
 
-install this using `cargo install --path .`
+install this using `cargo install grainpit`
 
 example systemd service:
 
@@ -39,11 +44,15 @@ WantedBy=default.target
 RequiredBy=network.target
 ```
 
+if you need to change the ip/port that grainpit binds to you can use the GRAINPIT_ADDR variable, the default is `127.0.0.1:5000`
+
 ### docker/podman
 
 theres a docker compose for this that you can use, run `docker compose up -d --build` and grainpit will start running at 127.0.0.1:5000
 
-### haproxy example
+## reverse proxy setup
+
+### haproxy
 
 im using haproxy as my reverse proxy, you can probably do similar with other reverse proxies, here is an example based on my haproxy config:
 
