@@ -2,6 +2,9 @@
 name = "grainpit"
 version = "0.1.0"
 edition = "2024"
+description = "tarpit to trap malicious scrapers"
+license = "CC0-1.0"
+repository = "https://github.com/GrainWare/grainpit"
 
 [dependencies]
 axum = "0.8.9"
