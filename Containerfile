@@ -12,13 +12,12 @@ RUN mkdir -p .cargo && printf '\
 WORKDIR /app
 COPY . .
 RUN cargo install --root /tmp --path .
-RUN strip /tmp/bin/tarpit
 
 FROM gcr.io/distroless/cc-debian13:nonroot AS runtime
 
-COPY --from=build --chown=nonroot:nonroot /tmp/bin/tarpit .
+COPY --from=build --chown=nonroot:nonroot /tmp/bin/grainpit .
 USER nonroot
-ENV TARPIT_ADDR="0.0.0.0:5000"
+ENV GRAINPIT_ADDR="0.0.0.0:5000"
 EXPOSE 5000
 
-ENTRYPOINT ["./tarpit"]
+ENTRYPOINT ["./grainpit"]

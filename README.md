@@ -17,7 +17,7 @@ grainpit is designed to be
 
 the server i am running this on has 2gb ram and 2 cores and most of those resources are used by varnish and haproxy, so this should be able to run on almost anything, if you experience slowdowns you should implement rate limits on your reverse proxies end
 
-if you need to change the ip/port that grainpit binds to you can use the TARPIT_ADDR variable, the default is `127.0.0.1:5000`
+if you need to change the ip/port that grainpit binds to you can use the GRAINPIT_ADDR variable, the default is `127.0.0.1:5000`
 
 ### systemd/bare metal
 
@@ -31,7 +31,7 @@ Description=Tarpit
 After=network.target
 
 [Service]
-ExecStart=/root/.cargo/bin/tarpit
+ExecStart=/root/.cargo/bin/grainpit
 Restart=always
 
 [Install]
@@ -41,7 +41,7 @@ RequiredBy=network.target
 
 ### docker/podman
 
-theres a docker compose for this that you can use, run `docker compose up -d --build` and tarpit will start running at 127.0.0.1:5000
+theres a docker compose for this that you can use, run `docker compose up -d --build` and grainpit will start running at 127.0.0.1:5000
 
 ### haproxy example
 

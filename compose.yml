@@ -1,6 +1,6 @@
 services:
-  tarpit:
-    container_name: tarpit
+  grainpit:
+    container_name: grainpit
     restart: unless-stopped
     build:
       context: .

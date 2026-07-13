@@ -75,7 +75,7 @@ async fn main() {
 
     // run it
     let listener = tokio::net::TcpListener::bind(
-        std::env::var("TARPIT_ADDR").unwrap_or("127.0.0.1:5000".to_string()),
+        std::env::var("GRAINPIT_ADDR").unwrap_or("127.0.0.1:5000".to_string()),
     )
     .await
     .unwrap();
