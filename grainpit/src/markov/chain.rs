@@ -83,7 +83,7 @@ impl Chain {
                     out[(out.len() - cs)..out.len()].try_into().unwrap();
 
                 if let Some(next_tokens) = self.tokens.get(&context) {
-                    let mut remaining_distance = rng.random_range::<usize, _>(..next_tokens.1);
+                    let mut remaining_distance = rng.random_range::<usize, _>(..=next_tokens.1);
                     for (t, c) in &next_tokens.0 {
                         remaining_distance = remaining_distance.saturating_sub(*c);
                         if remaining_distance == 0 {
