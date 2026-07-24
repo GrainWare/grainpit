@@ -1,0 +1,11 @@
+[package]
+name = "grainpit_webserver"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+axum = "0.8.9"
+tokio.workspace = true
+tracing.workspace = true
+tracing-subscriber = { version = "0.3.23", features = ["env-filter"] }
+grainpit = { path = "../grainpit" }

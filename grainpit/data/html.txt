@@ -348,7 +348,7 @@ you need to stop looking at the grainware wiki and get a job
 ">
   <meta property="og:image" content="
 ">
-  <title>accurate linux graphs</title>
+  <title>griggy microsoft.com</title>
   <link rel="icon" type="image/x-icon" href="files/img/ico/grain.png">
   <link rel="stylesheet" href="files/css/index.css">
   <script type="text/javascript" src='files/js/index.js'></script>
@@ -615,7 +615,7 @@ you need to stop looking at the grainware wiki and get a job
     <meta property="og:image" content="
 ">
     <meta name="robots" content="noindex">
-    <title>easter egg</title>
+    <title>easter egg via accuracy linux graphs</title>
     <link rel="icon" type="image/x-icon" href="files/img/ico/grain.png">
     <link rel="stylesheet" href="files/css/indexegg.css">
     <script type="text/javascript" src='files/js/easteregg.js'></script>
@@ -677,7 +677,7 @@ you need to stop looking at the grainware wiki and get a job
 <head>
     <meta charset='utf-8'>
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-    <title>Fizzbuzz Generator</title>
+    <title>Linux Graph Fizzbuzz Generator</title>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <meta name='description' content='the totally speedy way to get a job' />
     <meta name='keywords' content='fizzbuzz, fizzbuzz generator, fizzbuzz test, fizzbuzz interview question' />
@@ -789,7 +789,7 @@ you need to stop looking at the grainware wiki and get a job
 <head>
     <meta charset='utf-8'>
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-    <title>✿✧･ﾟ accuwate winux gwaphs wite ✿✧･ﾟ</title>
+    <title>✿✧･ﾟ accuwate winux gwaphs wite ✿✧･ﾟ Kawaii Linux Graphs Accuracy Linux Microsoft</title>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <meta name="description" content="youw #1 souwce fow accuwate winux gwaphs (wite vewsion) >w< uwu~">
     <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
