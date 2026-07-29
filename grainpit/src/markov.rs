@@ -1,4 +1,4 @@
-use rand::seq::IteratorRandom;
+use rand::{random_bool, seq::IteratorRandom};
 
 use crate::markov::chain::Chain;
 use regex::regex;
@@ -74,11 +74,16 @@ impl Markov {
         };
 
         format!(
-            "{}{}/{}/{}.html",
+            "{}{}/{}/{}{}",
             start_path,
             self.url_chain.generate(4),
             self.url_chain.generate(4),
-            self.url_chain.generate(24)
+            self.url_chain.generate(24),
+            if rand::random_bool(0.95) {
+                ".html"
+            } else {
+                ".txt"
+            }
         )
     }
 }
