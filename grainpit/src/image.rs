@@ -6,7 +6,8 @@ use zune_imageprocs::{invert::Invert, sobel::Sobel};
 pub fn gen_image() -> Vec<u8> {
     let img_x = 88;
     let img_y = 31;
-    let encoder = JpegEncoder::new_with_options(EncoderOptions::default().set_quality(5));
+    let encoder =
+        JpegEncoder::new_with_options(EncoderOptions::default().set_quality(5).set_num_threads(0));
 
     let mut pixels = [0; (88 * 31) * 3];
     rand::rng().fill(&mut pixels);
