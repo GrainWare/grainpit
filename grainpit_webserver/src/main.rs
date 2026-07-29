@@ -10,6 +10,8 @@ use axum::{
 use grainpit::markov::Markov;
 use tracing_subscriber::{fmt::format::FmtSpan, layer::SubscriberExt, util::SubscriberInitExt};
 
+#[cfg(feature = "compress")]
+use tower_http::compression::CompressionLayer;
 #[derive(Debug)]
 struct AppState {
     m: Markov,
@@ -28,9 +30,17 @@ async fn main() {
 
     let shared_state = Arc::new(AppState { m: Markov::new() });
 
+    #[cfg(not(feature = "compress"))]
     let app = Router::new()
         .route("/", get(handler))
         .route("/{*wildcard}", get(wildcard_handler))
+        .with_state(shared_state);
+
+    #[cfg(feature = "compress")]
+    let app = Router::new()
+        .route("/", get(handler))
+        .route("/{*wildcard}", get(wildcard_handler))
+        .layer(CompressionLayer::new())
         .with_state(shared_state);
 
     let listener = tokio::net::TcpListener::bind(

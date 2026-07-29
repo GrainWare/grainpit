@@ -17,6 +17,8 @@ grainpit itself is just a markov library and some extra utilities, there are 3 d
 
 this only exposes a webserver which you have to setup rules on your reverse proxy to actually get to, currently this is the most stable
 
+you can enable content compression for this proxy with the `compress` feature incase network load is a concern for you
+
 ### `proxy` (in development)
 
 this is under heavy development and is more complex, but proxies the traffic through grainpit which allows injecting hidden links to the tarpit and more configuration on grainpits side
