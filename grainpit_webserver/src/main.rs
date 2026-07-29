@@ -47,6 +47,7 @@ async fn wildcard_handler(
     Path(path): Path<String>,
     headers: HeaderMap,
 ) -> Response {
+    /*
     if let Some(header) = headers.get("Accept-Encoding")
         && header.to_str().unwrap_or("").contains("gzip")
     {
@@ -54,7 +55,7 @@ async fn wildcard_handler(
         headers.insert(header::CONTENT_TYPE, "text/plain".parse().unwrap());
         headers.insert(header::CONTENT_ENCODING, "gzip".parse().unwrap());
         return (headers, include_bytes!("./g.txt.gz")).into_response();
-    }
+    }*/
 
     if path.contains(".html") {
         handler(State(state)).await.into_response()
