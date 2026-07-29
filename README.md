@@ -10,6 +10,9 @@ some example rules for haproxy are included here, if you want to contribute more
 
 ![image of the tarpit](example.png)
 
+> [!TIP]
+> if you want to help test the latest features build from https://github.com/GrainWare/grainpit/pull/2
+
 ## features
 
 - fast and lightweight, on my low resource proxy vps (2 cores, e5-2680) it manages to hover around 2-3ms per request with 21mb ram usage while handling ~15 requests per second continuously to the tarpit without consuming enough cpu time where regular requests slow down substantially
