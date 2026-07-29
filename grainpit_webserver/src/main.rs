@@ -40,7 +40,7 @@ async fn main() {
     let app = Router::new()
         .route("/", get(handler))
         .route("/{*wildcard}", get(wildcard_handler))
-        .layer(CompressionLayer::new().quality(tower_http::CompressionLevel::Best))
+        .layer(CompressionLayer::new().quality(tower_http::CompressionLevel::Precise(9)))
         .with_state(shared_state);
 
     let listener = tokio::net::TcpListener::bind(
