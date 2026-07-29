@@ -1,4 +1,4 @@
-use rand::{random_bool, seq::IteratorRandom};
+use rand::seq::IteratorRandom;
 
 use crate::markov::chain::Chain;
 use regex::regex;
@@ -27,7 +27,7 @@ impl Markov {
         let href_regex = regex!(r#"href="(.*?)""#);
         let mut generated = self.html_chain.generate(2048);
         for i in href_regex.find_iter(&generated.clone()) {
-            generated = generated.replace(i.as_str(), &self.random_link());
+            generated = generated.replace(i.as_str(), &self.random_link(false));
         }
 
         let text_content_regex = regex!(r">([^<]+)<");
@@ -40,17 +40,25 @@ impl Markov {
             .collect();
 
         for r in url_replacements {
-            generated = generated.replacen(
-                &r,
-                &format!("<a href='{}'>{}</a>", self.random_link(), r),
-                1,
-            );
+            if rand::random_bool(0.9) {
+                generated = generated.replacen(
+                    &r,
+                    &format!("<a href='{}'>{}</a>", self.random_link(false), r),
+                    1,
+                );
+            } else {
+                generated = generated.replacen(
+                    &r,
+                    &format!("<img src='{}'>{}</img>", self.random_link(true), r),
+                    1,
+                );
+            }
         }
 
         format!("<p>{}</p>", generated)
     }
 
-    pub fn random_link(&self) -> String {
+    pub fn random_link(&self, image: bool) -> String {
         let start_path = if std::env::var("GRAINPIT_EXTRAURLS").is_ok() {
             if rand::random_bool(
                 std::env::var("GRAINPIT_EXTRAURLS_CHANCE")
@@ -79,7 +87,11 @@ impl Markov {
             self.url_chain.generate(4),
             self.url_chain.generate(4),
             self.url_chain.generate(24),
-            if rand::random_bool(0.95) { ".html" } else { "" }
+            if rand::random_bool(0.95) {
+                if image { ".jpg" } else { ".html" }
+            } else {
+                if image { ".png" } else { "" }
+            }
         )
     }
 }

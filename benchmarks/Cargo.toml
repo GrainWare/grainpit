@@ -11,5 +11,9 @@ grainpit = { path = "../grainpit" }
 criterion = "0.8.2"
 
 [[bench]]
-name = "generate"
+name = "markov"
+harness = false
+
+[[bench]]
+name = "images"
 harness = false
