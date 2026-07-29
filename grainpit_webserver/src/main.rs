@@ -3,6 +3,7 @@ use std::sync::Arc;
 use axum::{
     Router,
     extract::{Path, State},
+    http::{HeaderMap, header},
     response::{Html, IntoResponse, Response},
     routing::get,
 };
@@ -44,7 +45,17 @@ async fn main() {
 async fn wildcard_handler(
     State(state): State<Arc<AppState>>,
     Path(path): Path<String>,
+    headers: HeaderMap,
 ) -> Response {
+    if let Some(header) = headers.get("Accept-Encoding")
+        && header.to_str().unwrap_or("").contains("gzip")
+    {
+        let mut headers = HeaderMap::new();
+        headers.insert(header::CONTENT_TYPE, "text/plain".parse().unwrap());
+        headers.insert(header::CONTENT_ENCODING, "gzip".parse().unwrap());
+        return (headers, include_bytes!("./g.txt.gz")).into_response();
+    }
+
     if path.contains(".html") {
         handler(State(state)).await.into_response()
     } else {

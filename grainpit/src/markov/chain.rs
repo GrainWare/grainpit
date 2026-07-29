@@ -1,5 +1,3 @@
-use std::ops::Deref;
-
 use arrayvec::ArrayVec;
 use rand::{RngExt, SeedableRng};
 use rand_xoshiro::Xoshiro256Plus;
@@ -105,7 +103,7 @@ impl Chain {
 
         out.iter()
             .map(|x| self.tokenizer.get(*x as usize).unwrap())
-            .map(|s| s.deref())
+            .map(|s| s.as_str())
             .collect::<Vec<&str>>()
             .join("") // probably a better way to do this but seems to still be faster than the previous method
     }
