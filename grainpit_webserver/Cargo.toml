@@ -11,6 +11,8 @@ tracing-subscriber = { version = "0.3.23", features = ["env-filter"] }
 grainpit = { path = "../grainpit" }
 tower-http = { version = "0.7.0", features = [
     "compression-br",
+    "compression-gzip",
+    "compression-deflate",
     "compression-zstd",
 ], optional = true }
 
