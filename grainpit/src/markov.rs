@@ -79,11 +79,7 @@ impl Markov {
             self.url_chain.generate(4),
             self.url_chain.generate(4),
             self.url_chain.generate(24),
-            if rand::random_bool(0.95) {
-                ".html"
-            } else {
-                ".txt"
-            }
+            if rand::random_bool(0.95) { ".html" } else { "" }
         )
     }
 }
