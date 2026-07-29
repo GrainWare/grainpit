@@ -60,15 +60,6 @@ async fn wildcard_handler(
     if path.contains(".html") {
         handler(State(state)).await.into_response()
     } else if path.contains(".jpg") || path.contains(".png") {
-        if let Some(header) = headers.get("Accept-Encoding")
-            && header.to_str().unwrap_or("").contains("br")
-        {
-            let mut headers = HeaderMap::new();
-            headers.insert(header::CONTENT_TYPE, "image/jpeg".parse().unwrap());
-            headers.insert(header::CONTENT_ENCODING, "br".parse().unwrap());
-            return (headers, include_bytes!("./g.txt.br")).into_response();
-        }
-
         let output = grainpit::image::gen_image();
         let mut headers = HeaderMap::new();
         headers.insert(header::CONTENT_TYPE, "image/jpeg".parse().unwrap());
