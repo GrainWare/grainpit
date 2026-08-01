@@ -33,7 +33,7 @@ see <https://codeberg.org/doclic/grainpit.cgi/>
 
 ## features
 
-- fast and lightweight, on my low resource proxy vps (2 cores, e5-2680) it manages to hover around 2-3ms per request with 21mb ram usage while handling ~30 requests per second continuously to the tarpit without consuming enough cpu time where regular requests slow down substantially
+- fast and lightweight, on my low resource proxy vps (2 cores, e5-2680) it manages to hover around ~800µs per request with 13mb ram usage while handling ~30 requests per second continuously to the tarpit without consuming enough cpu time where regular requests slow down substantially
 - batshit insane default training data that (somehow) manages to put out html/css
 - able to generate fake config files as well for the malicious credential scanning bots
 - effective, as of writing this GPTBot has been sending requests to the tarpit since july 13 as well as amazons scraper and claudes scraper more recently
