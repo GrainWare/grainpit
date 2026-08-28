@@ -4,11 +4,11 @@ use rand_xoshiro::Xoshiro256Plus;
 use rustc_hash::FxHashMap;
 
 const MAX_CONTEXT_SIZE: usize = 3;
+type Tokens = FxHashMap<ArrayVec<u32, MAX_CONTEXT_SIZE>, (Vec<(u32, usize)>, usize)>;
 
 #[derive(Clone, PartialEq, Debug, Default)]
 pub struct Chain {
-    #[allow(clippy::type_complexity)] // Pain and misery
-    tokens: FxHashMap<ArrayVec<u32, MAX_CONTEXT_SIZE>, (Vec<(u32, usize)>, usize)>,
+    tokens: Tokens,
     tokenizer: Vec<String>,
 }
 
