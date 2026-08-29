@@ -97,7 +97,8 @@ impl Chain {
             if let Some(next_token) = next_token {
                 out.push(next_token);
             } else {
-                break;
+                next_token = Some(0);
+                out.push(next_token.unwrap());
             }
         }
 
@@ -140,6 +141,27 @@ impl Chain {
             }
             if ch == '?' && bytes.get(pos + 1) == Some(&b'>') {
                 pos += 2;
+                tokens.push(&s[start..pos]);
+                continue;
+            }
+
+            if ch == '<' && s[start..].starts_with("<style") {
+                pos += 1;
+                while pos < len {
+                    let c = s[pos..].chars().next().unwrap();
+                    pos += c.len_utf8();
+                    if c == '>' {
+                        break;
+                    }
+                }
+                while pos < len {
+                    if s[pos..].starts_with("</style>") {
+                        pos += "</style>".len();
+                        break;
+                    }
+                    let c = s[pos..].chars().next().unwrap();
+                    pos += c.len_utf8();
+                }
                 tokens.push(&s[start..pos]);
                 continue;
             }
