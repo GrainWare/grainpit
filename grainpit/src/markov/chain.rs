@@ -81,7 +81,7 @@ impl Chain {
                     out[(out.len() - cs)..out.len()].try_into().unwrap();
 
                 if let Some(next_tokens) = self.tokens.get(&context) {
-                    let mut remaining_distance = rng.random_range::<usize, _>(..=next_tokens.1);
+                    let mut remaining_distance = rng.random_range::<usize, _>(..next_tokens.1);
                     for (t, c) in &next_tokens.0 {
                         remaining_distance = remaining_distance.saturating_sub(*c);
                         if remaining_distance == 0 {
@@ -89,7 +89,6 @@ impl Chain {
                             break;
                         }
                     }
-
                     break;
                 }
             }
@@ -102,11 +101,11 @@ impl Chain {
             }
         }
 
-        out.iter()
-            .map(|x| self.tokenizer.get(*x as usize).unwrap())
-            .map(|s| s.as_str())
-            .collect::<Vec<&str>>()
-            .join("") // probably a better way to do this but seems to still be faster than the previous method
+        let mut result = String::with_capacity(out.len() * 64); // average word length of largest chain is 44, larger just to be safe
+        for &x in &out {
+            result.push_str(self.tokenizer.get(x as usize).unwrap());
+        }
+        result
     }
 
     fn make_tokenizer(s: &str) -> (Vec<String>, Vec<u32>) {
@@ -145,7 +144,9 @@ impl Chain {
                 continue;
             }
 
-            if ch == '<' && s[start..].starts_with("<style") {
+            if (ch == '<' && s[start..].starts_with("<style"))
+                || (ch == '<' && s[start..].starts_with("<script"))
+            {
                 pos += 1;
                 while pos < len {
                     let c = s[pos..].chars().next().unwrap();
@@ -155,8 +156,12 @@ impl Chain {
                     }
                 }
                 while pos < len {
-                    if s[pos..].starts_with("</style>") {
-                        pos += "</style>".len();
+                    if s[pos..].starts_with("</style>") || s[pos..].starts_with("</script>") {
+                        pos += if s[pos..].starts_with("</style>") {
+                            "</style>".len()
+                        } else {
+                            "</script>".len()
+                        };
                         break;
                     }
                     let c = s[pos..].chars().next().unwrap();
