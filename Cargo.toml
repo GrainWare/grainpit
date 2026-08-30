@@ -22,7 +22,7 @@ overflow-checks = true
 lto = "thin"
 panic = "unwind"
 incremental = true
-codegen-units = 16
+codegen-units = 256
 rpath = false
 
 [profile.release]
