@@ -1,2 +1,7 @@
-!src/
-!Cargo.*
+README.md
+.gitignore
+compose.yml
+Containerfile
+example.png
+LICENSE
+target/

@@ -1,2 +1,6 @@
 /target
-perf.data 
+
+# profiling bs
+perf.data*
+flamegraph.svg
+callgrind.out*

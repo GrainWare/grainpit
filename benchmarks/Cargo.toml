@@ -1,0 +1,19 @@
+[package]
+name = "benchmarks"
+version = "0.1.0"
+publish = false
+edition.workspace = true
+
+[dependencies]
+grainpit = { path = "../grainpit" }
+
+[dev-dependencies]
+criterion = "0.8.2"
+
+[[bench]]
+name = "markov"
+harness = false
+
+[[bench]]
+name = "images"
+harness = false
