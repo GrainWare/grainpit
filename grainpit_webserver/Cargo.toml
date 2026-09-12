@@ -2,13 +2,16 @@
 name = "grainpit_webserver"
 version = "0.3.0"
 edition = "2024"
+description = "tarpit to trap malicious scrapers"
+license = "CC0-1.0"
+repository = "https://github.com/GrainWare/grainpit"
 
 [dependencies]
+grainpit = { path = "../grainpit", version = "0.3.0" }
 axum = "0.8.9"
 tokio.workspace = true
 tracing.workspace = true
 tracing-subscriber = { version = "0.3.23", features = ["env-filter"] }
-grainpit = { path = "../grainpit" }
 tower-http = { version = "0.7.0", features = [
     "compression-br",
     "compression-gzip",
