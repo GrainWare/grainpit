@@ -396,6 +396,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "exmex"
+version = "0.20.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "114e4321fcb0242ffe3092e29a7a41c11fc119f1fa8e61cd21b72a68dd004aaa"
+dependencies = [
+ "lazy_static",
+ "num-traits",
+ "regex",
+ "smallvec",
+]
+
+[[package]]
 name = "find-msvc-tools"
 version = "0.1.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -485,10 +497,6 @@ dependencies = [
  "zune-image",
  "zune-imageprocs",
 ]
-
-[[package]]
-name = "grainpit_proxy"
-version = "0.1.0"
 
 [[package]]
 name = "grainpit_webserver"
@@ -1478,18 +1486,18 @@ dependencies = [
 
 [[package]]
 name = "zune-core"
-version = "0.5.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cb8a0807f7c01457d0379ba880ba6322660448ddebc890ce29bb64da71fb40f9"
+version = "0.5.3"
+source = "git+https://github.com/etemesi254/zune-image#e34d887dd03facceb558c1221ae41bd374181588"
 
 [[package]]
 name = "zune-image"
 version = "0.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d67f66717c2ca4f5fe18894e4724c7d22076dea8f245ea5386a05a4b6b8f4a53"
+source = "git+https://github.com/etemesi254/zune-image#e34d887dd03facceb558c1221ae41bd374181588"
 dependencies = [
  "bytemuck",
  "jpeg-encoder",
+ "log",
+ "rayon",
  "zune-core",
  "zune-jpeg",
 ]
@@ -1497,19 +1505,19 @@ dependencies = [
 [[package]]
 name = "zune-imageprocs"
 version = "0.5.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "915f2f441a4fe4a113839e6e0832c91516f09137f6421b3ce834d3db3ff1b067"
+source = "git+https://github.com/etemesi254/zune-image#e34d887dd03facceb558c1221ae41bd374181588"
 dependencies = [
+ "exmex",
  "moxcms",
+ "rayon",
  "zune-core",
  "zune-image",
 ]
 
 [[package]]
 name = "zune-jpeg"
-version = "0.5.15"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "27bc9d5b815bc103f142aa054f561d9187d191692ec7c2d1e2b4737f8dbd7296"
+version = "0.5.16-rc1"
+source = "git+https://github.com/etemesi254/zune-image#e34d887dd03facceb558c1221ae41bd374181588"
 dependencies = [
  "zune-core",
 ]
