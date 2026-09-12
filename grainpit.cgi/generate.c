@@ -21,9 +21,10 @@
 
 #define TOKEN_MAX_LENGTH 4096
 /* needs to be a power of 2 */
-#define TOKEN_MAX_COUNT 4096
+#define TOKEN_MAX_COUNT 8192
 #define NEXT_TOK_ODDS_MAX_LEN 262144
-#define MAP_MAX_LEN 131072
+/* needs to be a power of 2 */
+#define MAP_MAX_LEN 524288
 #define MAP_MAX_MASK (MAP_MAX_LEN - 1)
 #define TOKEN_CONTENTS_MAX_LENGTH 1048576
 #define CONTEXT_WINDOW_LENGTH 5
