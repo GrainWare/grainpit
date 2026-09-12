@@ -31,9 +31,12 @@ this is planned to be the preferred way to use grainpit once its completed
 
 currently this is empty in the repo because the general project structure for it is still being figured out
 
-### cgi script (unofficial)
+### cgi script
 
-see <https://codeberg.org/doclic/grainpit.cgi/>
+> [!NOTE]
+> this currently does not support the full feature set and may be out of date as it does not directly depend on the main grainpit library
+
+written in c unlike the rest of the project (also means compatibility if you are on a machine without support for rust), thank you to @doclic for writing this implementation
 
 ## features
 

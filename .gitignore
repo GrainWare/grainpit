@@ -4,3 +4,11 @@
 perf.data*
 flamegraph.svg
 callgrind.out*
+
+# grainpit.cgi stuff
+grainpit.cgi/grainpit.cgi
+grainpit.cgi/main.o
+grainpit.cgi/config.h
+grainpit.cgi/generated.h
+grainpit.cgi/generate
+grainpit.cgi/generate.o
