@@ -13,7 +13,7 @@
 static unsigned char buf[262144];
 
 int
-main(int argc, char **argv)
+main(void)
 {
 	size_t bufpos, i;
 	const char *ext, *path_info;
