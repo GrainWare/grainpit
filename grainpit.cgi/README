@@ -1,2 +1,6 @@
 grainpit.cgi
 
+build with make
+if you need to edit config edit config.h
+the compilation uses a lot of memory (like 8gb) go complain to doclic if it causes issues
+
