@@ -30,7 +30,7 @@ main(int argc, char **argv)
 	if (ext == NULL)
 		ext = "";
 	if (path_info[0] != 0 && strcmp(ext, ".html") != 0) {
-		buf[markov3_generate(buf, sizeof(buf) - 1, 512)] = 0;
+		buf[config_generate(buf, sizeof(buf) - 1, 512)] = 0;
 		if (printf("Content-Type: text/plain; charset=UTF-8\n\n%s",
 		    buf) < 0)
 			return 1;
@@ -51,23 +51,23 @@ main(int argc, char **argv)
 			    ARRAYSIZE(grainpit_extraurls)], stdout) == EOF)
 				return 1;
 		bufpos = 0;
-		bufpos += markov4_generate(
+		bufpos += url_generate(
 		    buf + bufpos, sizeof(buf) - bufpos - 3, 4);
 		buf[bufpos++] = '/';
-		bufpos += markov4_generate(
+		bufpos += url_generate(
 		    buf + bufpos, sizeof(buf) - bufpos - 2, 4);
 		buf[bufpos++] = '/';
-		bufpos += markov4_generate(
+		bufpos += url_generate(
 		    buf + bufpos, sizeof(buf) - bufpos - 1, 4);
 		buf[bufpos++] = 0;
 		if (printf("%s.html'>", buf) < 0)
 			return 1;
-		buf[markov2_generate(buf, sizeof(buf) - 1, 16)] = 0;
+		buf[url_name_generate(buf, sizeof(buf) - 1, 16)] = 0;
 		if (printf("%s</a><br>", buf) < 0)
 			return 1;
 	}
 
-	buf[markov1_generate(buf, sizeof(buf) - 1, 4096)] = 0;
+	buf[html_generate(buf, sizeof(buf) - 1, 4096)] = 0;
 	/* XXX modify href */
 	if (fputs(buf, stdout) == EOF)
 		return 1;
