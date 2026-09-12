@@ -16,7 +16,7 @@
 	fprintf(stderr, "big bad error at %s:%d, errno: %s\n", \
 	    __FILE__, __LINE__, strerror(errno)); \
 	unlink("generated.h"); \
-	exit(1); \
+	abort(); \
 } while(0)
 
 #define TOKEN_MAX_LENGTH 4096
