@@ -1,6 +1,7 @@
 # grainpit
 
-![Crates.io Version](https://img.shields.io/crates/v/grainpit)
+[![Crates.io Version](https://img.shields.io/crates/v/grainpit)](https://crates.io/crates/grainpit)
+[![Crates.io Downloads](https://img.shields.io/crates/d/grainpit)](https://crates.io/crates/grainpit)
 
 markov tarpit but grain
 
@@ -14,6 +15,9 @@ markov tarpit but grain
 grainpit itself is just a markov library and some extra utilities, there are 3 different backends you can use to actually add functionality
 
 ### `webserver`
+
+[![Crates.io Version](https://img.shields.io/crates/v/grainpit_webserver)](https://crates.io/crates/grainpit_webserver)
+[![Crates.io Downloads](https://img.shields.io/crates/d/grainpit_webserver)](https://crates.io/crates/grainpit_webserver)
 
 this only exposes a webserver which you have to setup rules on your reverse proxy to actually get to, currently this is the most stable
 
