@@ -34,7 +34,8 @@ currently this is empty in the repo because the general project structure for it
 ### cgi script
 
 > [!NOTE]
-> this currently does not support the full feature set and may be out of date as it does not directly depend on the main grainpit library
+> this currently does not support the full feature set and may be out of date as it does not directly depend on the main grainpit library. you are better off using one of the other backends unless you absolutely need this version
+> compilation also takes like 8G of ram because the generate.c implementation is horrible
 
 written in c unlike the rest of the project (also means compatibility if you are on a machine without support for rust), thank you to @doclic for writing this implementation
 
