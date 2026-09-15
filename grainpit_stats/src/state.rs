@@ -16,10 +16,13 @@ pub struct AppState {
 
 impl AppState {
     pub async fn new() -> Result<Self, Box<dyn std::error::Error>> {
-        let db_options =
-            PgConnectOptions::from_str("postgresql://postgres:example@localhost:5432/postgres")?
-                .disable_statement_logging()
-                .to_owned();
+        let db_options = PgConnectOptions::from_str(
+            std::env::var("DATABASE_URL")
+                .unwrap_or("postgresql://postgres:example@localhost:5432/postgres".to_owned())
+                .as_str(),
+        )?
+        .disable_statement_logging()
+        .to_owned();
 
         let pool = PgPoolOptions::new().connect_with(db_options).await?;
         sqlx::migrate!("./migrations").run(&pool).await?;
