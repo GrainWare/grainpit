@@ -48,9 +48,35 @@ async fn main() {
 
     let stats_url = std::env::var("GRAINPIT_STATS_URL").ok();
     let stats_key = std::env::var("GRAINPIT_STATS_KEY").ok();
+    let mut extraurls = std::env::var("GRAINPIT_EXTRAURLS")
+        .ok()
+        .map(|s| s.split(',').map(|s| s.to_owned()).collect());
+    let extraurls_chance = std::env::var("GRAINPIT_EXTRAURLS_CHANCE")
+        .unwrap_or("5".to_owned())
+        .parse::<u8>()
+        .unwrap() as f64
+        / 100.0;
 
     let stats = if let (Some(stats_url), Some(stats_key)) = (stats_url, stats_key) {
-        info!("sending stats to {} with key {}", stats_url, stats_key);
+        info!("sending stats to {}", stats_url);
+        let client = reqwest::Client::new();
+        let body = client
+            .get(format!("{}api/grainpit_urls", stats_url))
+            .header("Authorization", stats_key.clone())
+            .send()
+            .await
+            .ok();
+        if let Some(body) = body {
+            extraurls = Some(
+                body.text()
+                    .await
+                    .unwrap()
+                    .split('\n')
+                    .map(|s| s.to_owned())
+                    .collect(),
+            );
+        }
+
         Some(Stats {
             stats_url,
             stats_key,
@@ -62,7 +88,7 @@ async fn main() {
     };
 
     let shared_state = Arc::new(AppState {
-        m: Markov::new(),
+        m: Markov::new(extraurls, extraurls_chance),
         stats,
     });
 
@@ -125,7 +151,7 @@ async fn wildcard_handler(
                 .serialize()
                 .unwrap();
             let client = reqwest::Client::new();
-            let res = client
+            let _res = client
                 .post(format!("{}api/submit", stats.stats_url))
                 .header("Authorization", stats.stats_key.clone())
                 .body(submission)
@@ -167,7 +193,7 @@ async fn handler(
                 .serialize()
                 .unwrap();
             let client = reqwest::Client::new();
-            let res = client
+            let _res = client
                 .post(format!("{}api/submit", stats.stats_url))
                 .header("Authorization", stats.stats_key.clone())
                 .body(submission)

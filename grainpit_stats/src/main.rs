@@ -40,6 +40,10 @@ async fn main() {
             "/api/edit_grainpit_urls",
             post(routes::api::edit_grainpit_urls::edit_grainpit_urls),
         )
+        .route(
+            "/api/grainpit_urls",
+            get(routes::api::grainpit_urls::grainpit_urls),
+        )
         .route("/api/submit", post(routes::api::submit::submit))
         .with_state(shared_state)
         .layer(

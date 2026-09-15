@@ -1,7 +1,7 @@
 use chrono::DateTime;
 use grainpit::stats::Submission;
 use ipnet::IpNet;
-use sqlx::{PgPool, QueryBuilder, prelude::FromRow};
+use sqlx::{PgPool, QueryBuilder, Row, prelude::FromRow};
 use uuid::Uuid;
 
 #[derive(FromRow, Debug)]
@@ -47,6 +47,13 @@ pub async fn edit_user_grainpit_urls(
         .execute(pool)
         .await?;
     Ok(())
+}
+
+pub async fn get_grainpit_urls(pool: &PgPool) -> Result<Vec<String>, sqlx::Error> {
+    sqlx::query("SELECT unnest(grainpit_urls) FROM account;")
+        .fetch_all(pool)
+        .await
+        .map(|rows| rows.into_iter().map(|row| row.get(0)).collect())
 }
 
 pub async fn insert_submission(

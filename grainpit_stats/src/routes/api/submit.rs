@@ -1,18 +1,14 @@
 use anyhow::Result;
-use axum::Json;
 use axum::body::Bytes;
 use axum::extract::{FromRequest, Request, State};
 use axum::http::{HeaderMap, StatusCode};
 use axum::response::{IntoResponse, Response};
 use grainpit::stats::Submission;
-use regex::Regex;
-use serde::de::DeserializeOwned;
 use std::str::FromStr;
 use std::sync::Arc;
-use tracing::{Level, span};
 use uuid::Uuid;
 
-use crate::db::{edit_user_grainpit_urls, get_account_from_key, insert_submission, key_valid};
+use crate::db::{get_account_from_key, insert_submission, key_valid};
 use crate::state::AppState;
 use crate::utils::AppError;
 
