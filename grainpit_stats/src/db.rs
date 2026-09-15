@@ -77,3 +77,36 @@ pub async fn insert_submission(
     query.execute(pool).await?;
     Ok(())
 }
+
+pub struct Stats {
+    pub unique_ips: u32,
+    pub unique_uas: u32,
+    pub total_requests: u64,
+    pub grainpit_url_count: u32,
+}
+
+pub async fn get_stats(pool: &PgPool) -> Result<Stats, sqlx::Error> {
+    let row = sqlx::query(
+        r#"SELECT
+            COUNT(DISTINCT ip) AS unique_ips,
+            COUNT(DISTINCT user_agent) AS unique_uas,
+            COUNT(*) AS total_requests,
+            (
+                SELECT COUNT(*)
+                FROM (
+                    SELECT unnest(grainpit_urls) AS url
+                    FROM account
+                ) AS all_urls
+            ) AS grainpit_url_count
+        FROM request"#,
+    )
+    .fetch_one(pool)
+    .await?;
+
+    Ok(Stats {
+        unique_ips: row.try_get::<i64, _>("unique_ips")? as u32,
+        unique_uas: row.try_get::<i64, _>("unique_uas")? as u32,
+        total_requests: row.try_get::<i64, _>("total_requests")? as u64,
+        grainpit_url_count: row.try_get::<i64, _>("grainpit_url_count")? as u32,
+    })
+}

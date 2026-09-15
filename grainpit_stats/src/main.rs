@@ -5,7 +5,8 @@ pub mod templates;
 pub mod utils;
 
 use axum::Router;
-use axum::response::Html;
+use axum::extract::State;
+use axum::response::{Html, IntoResponse, Response};
 use axum::routing::{get, post};
 use axum_client_ip::ClientIpSource;
 use std::net::SocketAddr;
@@ -17,6 +18,7 @@ use tracing_subscriber::fmt::format::FmtSpan;
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
 
+use crate::db::get_stats;
 use crate::state::AppState;
 use crate::templates::IndexTemplate;
 
@@ -69,14 +71,16 @@ async fn main() {
     .unwrap();
 }
 
-async fn handler() -> Html<String> {
+async fn handler(State(state): State<Arc<AppState>>) -> Response {
+    let stats = get_stats(&state.pool).await.unwrap();
     Html(
         IndexTemplate {
-            ips: &0,
-            user_agents: &0,
-            requests: &0,
-            grainpit_urls: &0,
+            ips: &stats.unique_ips,
+            user_agents: &stats.unique_uas,
+            requests: &stats.total_requests,
+            grainpit_urls: &stats.grainpit_url_count,
         }
         .to_string(),
     )
+    .into_response()
 }
