@@ -1,6 +1,7 @@
 use chrono::DateTime;
+use grainpit::stats::Submission;
 use ipnet::IpNet;
-use sqlx::{PgPool, prelude::FromRow};
+use sqlx::{PgPool, QueryBuilder, prelude::FromRow};
 use uuid::Uuid;
 
 #[derive(FromRow, Debug)]
@@ -45,5 +46,27 @@ pub async fn edit_user_grainpit_urls(
         .bind(key)
         .execute(pool)
         .await?;
+    Ok(())
+}
+
+pub async fn insert_submission(
+    pool: &PgPool,
+    submission: Submission,
+    user_id: i32,
+) -> Result<(), sqlx::Error> {
+    let mut query_builder =
+        QueryBuilder::new("INSERT INTO request (time, creator, url, ip, user_agent) ");
+
+    query_builder.push_values(submission.requests, |mut b, request| {
+        b.push_bind(request.time)
+            .push_bind(user_id)
+            .push_bind(request.url)
+            .push_bind(request.ip)
+            .push_bind(request.user_agent);
+    });
+
+    let query = query_builder.build();
+
+    query.execute(pool).await?;
     Ok(())
 }

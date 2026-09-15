@@ -22,6 +22,10 @@ impl AppState {
         let pool = PgPoolOptions::new().connect_with(db_options).await?;
         sqlx::migrate!("./migrations").run(&pool).await?;
 
+        sqlx::query("ALTER DATABASE postgres SET timescaledb.enable_direct_compress_insert = on")
+            .execute(&pool)
+            .await?;
+
         if !sqlx::query_scalar("SELECT EXISTS(SELECT 1 FROM account WHERE name = $1)")
             .bind("admin")
             .fetch_one(&pool)

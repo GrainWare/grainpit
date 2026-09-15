@@ -5,7 +5,7 @@ use ipnet::IpNet;
 use minicbor_serde::error::{DecodeError, EncodeError};
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Request {
     pub time: DateTime<chrono::Utc>,
     pub url: String,
@@ -13,7 +13,7 @@ pub struct Request {
     pub user_agent: String,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Submission {
     pub requests: Vec<Request>,
 }

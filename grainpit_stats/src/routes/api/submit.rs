@@ -9,17 +9,17 @@ use regex::Regex;
 use serde::de::DeserializeOwned;
 use std::str::FromStr;
 use std::sync::Arc;
+use tracing::{Level, span};
 use uuid::Uuid;
 
-use crate::db::{edit_user_grainpit_urls, key_valid};
+use crate::db::{edit_user_grainpit_urls, get_account_from_key, insert_submission, key_valid};
 use crate::state::AppState;
 use crate::utils::AppError;
 
-struct Cbor<T>(T);
+pub struct Cbor(Submission);
 
-impl<T, S> FromRequest<S> for Cbor<T>
+impl<S> FromRequest<S> for Cbor
 where
-    T: DeserializeOwned,
     S: Send + Sync,
 {
     type Rejection = (StatusCode, String);
@@ -31,19 +31,20 @@ where
                 format!("Failed to extract bytes: {}", e),
             )
         })?;
-        Submission::deserialize(bytes.to_vec()).map_err(|e| {
+        let value = Submission::deserialize(bytes.to_vec()).map_err(|e| {
             (
                 StatusCode::UNPROCESSABLE_ENTITY,
                 format!("Failed to deserialize CBOR: {}", e),
             )
-        })
+        })?;
+        Ok(Cbor(value))
     }
 }
 
 pub async fn submit(
     headers: HeaderMap,
     State(state): State<Arc<AppState>>,
-    Json(payload): Json<Vec<String>>,
+    Cbor(submission): Cbor,
 ) -> Result<Response, AppError> {
     let key = headers.get("Authorization");
     if key.is_none() {
@@ -67,18 +68,9 @@ pub async fn submit(
     if !key_valid(&state.pool, uuid).await? {
         return Ok((StatusCode::UNAUTHORIZED, "invalid Authorization header").into_response());
     }
+    let account = get_account_from_key(&state.pool, uuid).await?;
 
-    let re = Regex::new(r"^https:\/\/.[^\/]*\/$").unwrap();
-    for (idx, url) in payload.iter().enumerate() {
-        if !re.is_match(url) {
-            return Ok((
-                StatusCode::BAD_REQUEST,
-                format!("invalid URL at line {} ({})", idx + 1, url),
-            )
-                .into_response());
-        }
-    }
+    insert_submission(&state.pool, submission, account.id).await?;
 
-    edit_user_grainpit_urls(&state.pool, uuid, payload).await?;
     Ok((StatusCode::OK, "success").into_response())
 }
