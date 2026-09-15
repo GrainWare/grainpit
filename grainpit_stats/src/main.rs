@@ -77,8 +77,6 @@ async fn handler(State(state): State<Arc<AppState>>) -> Response {
     let stats = get_stats(&state.pool).await.unwrap();
     Html(
         IndexTemplate {
-            ips: &stats.unique_ips,
-            user_agents: &stats.unique_uas,
             requests: &stats.total_requests,
             grainpit_urls: &stats.grainpit_url_count,
         }

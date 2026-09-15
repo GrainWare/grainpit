@@ -3,8 +3,6 @@ use askama::Template;
 #[derive(Template)]
 #[template(path = "index.html")]
 pub struct IndexTemplate<'a> {
-    pub ips: &'a u32,
-    pub user_agents: &'a u32,
     pub requests: &'a u64,
     pub grainpit_urls: &'a u32,
 }
