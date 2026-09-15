@@ -38,10 +38,12 @@ async fn main() {
         .route("/", get(handler))
         .route("/auth", get(routes::auth::auth))
         .route("/account", get(routes::account::account))
+        .route("/admin", get(routes::account::admin))
         .route(
             "/api/edit_grainpit_urls",
             post(routes::api::edit_grainpit_urls::edit_grainpit_urls),
         )
+        .route("/api/add_user", post(routes::api::add_user::add_user))
         .route(
             "/api/grainpit_urls",
             get(routes::api::grainpit_urls::grainpit_urls),

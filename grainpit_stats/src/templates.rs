@@ -30,3 +30,7 @@ pub struct AccountTemplate<'a> {
     pub urls: &'a String,
     pub admin: &'a bool,
 }
+
+#[derive(Template)]
+#[template(path = "admin.html")]
+pub struct AdminTemplate {}

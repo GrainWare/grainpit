@@ -110,3 +110,13 @@ pub async fn get_stats(pool: &PgPool) -> Result<Stats, sqlx::Error> {
         grainpit_url_count: row.try_get::<i64, _>("grainpit_url_count")? as u32,
     })
 }
+
+pub async fn create_user(pool: &PgPool, name: String) -> Result<Uuid, sqlx::Error> {
+    let key = Uuid::new_v4();
+    sqlx::query("INSERT INTO account (key, name) VALUES ($1, $2)")
+        .bind(key)
+        .bind(name)
+        .execute(pool)
+        .await?;
+    Ok(key)
+}

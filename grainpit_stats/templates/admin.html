@@ -16,9 +16,9 @@
       }
     </style>
     <script type="text/javascript">
-      async function editUrls(urls) {
+      async function addUser(username) {
         const statusElement = document.getElementById("status");
-        const url = "/api/edit_grainpit_urls";
+        const url = "/api/add_user";
         try {
           const response = await fetch(url, {
             method: "POST",
@@ -26,13 +26,13 @@
               "Content-Type": "application/json",
               Authorization: (await cookieStore.get("key")).value,
             },
-            body: JSON.stringify(urls.split("\n")),
-            mode: "no-cors",
+            body: JSON.stringify({ username }),
+            mode: "same-origin",
           });
           if (!response.ok) {
             statusElement.textContent = `failed (request status ${response.status}), output: ${await response.text()}`;
           } else {
-            statusElement.textContent = "success";
+            statusElement.textContent = `success, key: ${await response.text()}`;
           }
         } catch (error) {
           console.error(error.message);
@@ -41,32 +41,21 @@
     </script>
   </head>
   <body>
-    <h1>hello {{ username }}</h1>
+    <h1>super fancy admin panel</h1>
     <hr />
-    <h2>edit grainpit urls</h2>
-    <p>
-      newline delimited urls (must have trailing slash) e.g.<br />
-      https://foo.bar/<br />
-      https://baz.qux/
-    </p>
-    <form action="javascript:editUrls(urls.value)">
-      <textarea
-        name="urls"
-        id="urls"
-        placeholder="urls here"
-        rows="6"
-        cols="80"
+    <h2>add new user</h2>
+    <form action="javascript:addUser(username.value)">
+      <input
+        name="username"
+        id="username"
+        placeholder="username"
+        type="text"
         autocomplete="off"
-      >
-{{ urls }}</textarea
-      >
+      />
       <br />
       <input type="submit" value="Submit" />
     </form>
     <p id="status"></p>
     <hr />
-    {% if admin ~%}
-    <a href="/admin">go to admin panel</a>
-    {%~ endif %}
   </body>
 </html>

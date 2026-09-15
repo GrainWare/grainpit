@@ -6,6 +6,8 @@ use std::str::FromStr;
 use std::sync::Mutex;
 use tracing::warn;
 
+use crate::db::create_user;
+
 #[derive(Debug)]
 pub struct AppState {
     pub pool: PgPool,
@@ -31,13 +33,7 @@ impl AppState {
             .fetch_one(&pool)
             .await?
         {
-            let key = uuid::Uuid::new_v4();
-            sqlx::query("INSERT INTO account (name, key) VALUES ($1, $2);")
-                .bind("admin")
-                .bind(key)
-                .execute(&pool)
-                .await
-                .unwrap();
+            let key = create_user(&pool, "admin".into()).await.unwrap();
             warn!(
                 "created admin account with key {} (this will not be printed again, keep the key safe)",
                 key

@@ -1,18 +1,27 @@
 use anyhow::Result;
+use axum::Json;
 use axum::extract::State;
 use axum::http::{HeaderMap, StatusCode};
 use axum::response::{IntoResponse, Response};
+use regex::Regex;
+use serde::Deserialize;
 use std::str::FromStr;
 use std::sync::Arc;
 use uuid::Uuid;
 
-use crate::db::{get_grainpit_urls, key_valid};
+use crate::db::{create_user, edit_user_grainpit_urls, get_account_from_key, key_valid};
 use crate::state::AppState;
 use crate::utils::AppError;
 
-pub async fn grainpit_urls(
+#[derive(Deserialize)]
+pub struct Payload {
+    username: String,
+}
+
+pub async fn add_user(
     headers: HeaderMap,
     State(state): State<Arc<AppState>>,
+    Json(payload): Json<Payload>,
 ) -> Result<Response, AppError> {
     let key = headers.get("Authorization");
     if key.is_none() {
@@ -36,7 +45,12 @@ pub async fn grainpit_urls(
     if !key_valid(&state.pool, uuid).await? {
         return Ok((StatusCode::UNAUTHORIZED, "invalid Authorization header").into_response());
     }
+    let account = get_account_from_key(&state.pool, uuid).await?;
+    if account.name != "admin" {
+        return Ok((StatusCode::UNAUTHORIZED, "nope").into_response());
+    }
 
-    let urls = get_grainpit_urls(&state.pool).await?;
-    Ok((StatusCode::OK, urls.join("\n")).into_response())
+    let user_key = create_user(&state.pool, payload.username).await?;
+
+    Ok((StatusCode::OK, user_key.to_string()).into_response())
 }
