@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["benchmarks", "grainpit", "grainpit_webserver"]
+members = ["benchmarks", "grainpit", "grainpit_stats", "grainpit_webserver"]
 
 [workspace.package]
 version = "0.3.0"
@@ -14,7 +14,7 @@ tracing = "0.1.44"
 tokio = { version = "1.53.0", features = ["full"] }
 
 [profile.dev]
-opt-level = 3
+opt-level = 2
 debug = true
 strip = "none"
 debug-assertions = true

@@ -1,0 +1,78 @@
+pub mod db;
+pub mod routes;
+pub mod state;
+pub mod templates;
+pub mod utils;
+
+use axum::Router;
+use axum::response::Html;
+use axum::routing::{get, post};
+use axum_client_ip::ClientIpSource;
+use std::net::SocketAddr;
+use std::str::FromStr;
+use std::sync::Arc;
+use tower_cookies::CookieManagerLayer;
+use tracing::info;
+use tracing_subscriber::fmt::format::FmtSpan;
+use tracing_subscriber::layer::SubscriberExt;
+use tracing_subscriber::util::SubscriberInitExt;
+
+use crate::state::AppState;
+use crate::templates::IndexTemplate;
+
+#[tokio::main]
+async fn main() {
+    tracing_subscriber::registry()
+        .with(
+            tracing_subscriber::EnvFilter::try_from_default_env()
+                .unwrap_or_else(|_| format!("{}=debug", env!("CARGO_CRATE_NAME")).into()),
+        )
+        .with(tracing_subscriber::fmt::layer().with_span_events(FmtSpan::CLOSE))
+        .init();
+
+    let shared_state = Arc::new(AppState::new().await.unwrap());
+
+    let app = Router::new()
+        .route("/", get(handler))
+        .route("/auth", get(routes::auth::auth))
+        .route("/account", get(routes::account::account))
+        .route(
+            "/api/edit_grainpit_urls",
+            post(routes::api::edit_grainpit_urls::edit_grainpit_urls),
+        )
+        .route("/api/submit", post(routes::api::submit::submit))
+        .with_state(shared_state)
+        .layer(
+            ClientIpSource::from_str(
+                &std::env::var("IP_SOURCE").unwrap_or("ConnectInfo".to_string()),
+            )
+            .unwrap()
+            .into_extension(),
+        )
+        .layer(CookieManagerLayer::new());
+
+    let listener = tokio::net::TcpListener::bind(
+        std::env::var("GRAINPIT_ADDR").unwrap_or("127.0.0.1:7000".to_string()),
+    )
+    .await
+    .unwrap();
+    info!("listening on {}", listener.local_addr().unwrap());
+    axum::serve(
+        listener,
+        app.into_make_service_with_connect_info::<SocketAddr>(),
+    )
+    .await
+    .unwrap();
+}
+
+async fn handler() -> Html<String> {
+    Html(
+        IndexTemplate {
+            ips: &0,
+            user_agents: &0,
+            requests: &0,
+            grainpit_urls: &0,
+        }
+        .to_string(),
+    )
+}
