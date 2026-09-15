@@ -40,6 +40,28 @@ in order to add these there are a few variables you can configure
 - `GRAINPIT_EXTRAURLS`: comma separated list like `https://example.com/,https://otherexample.com/`
 - `GRAINPIT_EXTRAURLS_CHANCE`: chance to make a link start with this in percentage (default is 5%)
 
+### stats
+
+in order to enable stats you must define all of these
+
+- `GRAINPIT_STATS_URL`: url of a `grainpit_stats` server (e.g. `https://grainpit.grainware.org/`)
+- `GRAINPIT_STATS_KEY`: key for the `grainpit_stats` server
+- `GRAINPIT_IP_SOURCE`: will be explained below
+
+you must set the ip source depending on your proxy configuration, here are the available options (please make 100% sure this is correct according to your setup)
+
+|value|header|typical proxy/service|
+|-----|------|---------------------|
+|CfConnectingIp|CF-Connecting-IP|Cloudflare|
+|CloudFrontViewerAddress|CloudFront-Viewer-Address|AWS CloudFront|
+|FlyClientIp|Fly-Client-IP|Fly.io|
+|RightmostForwarded|Forwarded|Proxies supporting RFC 7239 (extracts rightmost `for=`)|
+|RightmostXForwardedFor|X-Forwarded-For|Nginx, Apache, HAProxy, CDNs, LBs **(this option is probably what youre looking for in most circumstances!)**|
+|TrueClientIp|True-Client-IP|Cloudflare, Akamai|
+|XEnvoyExternalAddress|X-Envoy-External-Address|Envoy, Istio|
+|XRealIp|X-Real-Ip|Nginx|
+|ConnectInfo|N/A (uses socket address)|No proxy, e.g. listening directly to 80 port|
+
 ## reverse proxy setup
 
 if you setup grainpit for any other reverse proxies (especially nginx and caddy) contribute documentation it would be really really appreciated thanks

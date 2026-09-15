@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>login</title>
+    <style>
+      body {
+        background: black;
+        font-family: monospace;
+        color: white;
+        min-height: 50vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      a {
+        color: lightblue;
+      }
+
+      pre {
+        white-space: pre-wrap;
+        white-space: -moz-pre-wrap;
+        white-space: -pre-wrap;
+        white-space: -o-pre-wrap;
+        word-wrap: break-word;
+      }
+
+      .box {
+        border: 2px solid white;
+        padding: 20px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="box">
+      <h1>super fancy login form</h1>
+      {{ message }}
+      <form>
+        <input type="text" name="key" placeholder="key" />
+        <input type="hidden" name="redirect" value="{{ redirect }}" />
+        <input type="submit" value="Submit" />
+      </form>
+    </div>
+  </body>
+</html>

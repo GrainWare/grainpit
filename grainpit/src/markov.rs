@@ -1,4 +1,5 @@
-use rand::seq::IteratorRandom;
+use rand::seq::{IndexedRandom, IteratorRandom};
+use tracing::info;
 
 use crate::markov::chain::Chain;
 use regex::regex;
@@ -11,15 +12,22 @@ pub struct Markov {
     pub url_name_chain: Chain,
     pub url_chain: Chain,
     pub config_chain: Chain,
+    extraurls: Option<Vec<String>>,
+    extraurls_chance: f64,
 }
 
 impl Markov {
-    pub fn new() -> Self {
+    pub fn new(extraurls: Option<Vec<String>>, extraurls_chance: f64) -> Self {
+        if let Some(extraurls) = &extraurls {
+            info!("loaded {} extraurls", extraurls.len());
+        }
         Self {
             html_chain: Chain::new(include_str!("../data/html.txt")),
             url_name_chain: Chain::new(include_str!("../data/url_name.txt")),
             url_chain: Chain::new(include_str!("../data/url.txt")),
             config_chain: Chain::new(include_str!("../data/config.txt")),
+            extraurls,
+            extraurls_chance,
         }
     }
 
@@ -59,16 +67,11 @@ impl Markov {
     }
 
     pub fn random_link(&self, image: bool) -> String {
-        let start_path = if std::env::var("GRAINPIT_EXTRAURLS").is_ok() {
-            if rand::random_bool(
-                std::env::var("GRAINPIT_EXTRAURLS_CHANCE")
-                    .unwrap_or("5".to_owned())
-                    .parse::<u8>()
-                    .unwrap() as f64
-                    / 100.0,
-            ) {
+        let start_path = if let Some(extraurls) = &self.extraurls {
+            if rand::random_bool(self.extraurls_chance) {
                 let rng = &mut rand::rng();
-                std::env::var("GRAINPIT_EXTRAURLS")
+                extraurls
+                    .choose(rng)
                     .unwrap()
                     .split(',')
                     .choose(rng)
@@ -93,11 +96,5 @@ impl Markov {
                 if image { ".png" } else { "" }
             }
         )
-    }
-}
-
-impl Default for Markov {
-    fn default() -> Self {
-        Markov::new()
     }
 }

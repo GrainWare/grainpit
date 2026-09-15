@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>login</title>
+    <style>
+      body {
+        background: black;
+        font-family: monospace;
+        color: white;
+      }
+
+      a {
+        color: lightblue;
+      }
+    </style>
+    <script>
+      document.cookie = "key={{ key }}";
+      window.location.replace("{{ redirect }}");
+    </script>
+  </head>
+  <body>
+    <noscript>
+      <p>please enable javascript and refresh the page</p>
+    </noscript>
+    <p>redirecting...</p>
+  </body>
+</html>

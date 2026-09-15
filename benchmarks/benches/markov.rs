@@ -3,7 +3,7 @@ use grainpit::markov::Markov;
 use criterion::{Criterion, Throughput, criterion_group, criterion_main};
 
 fn bench(c: &mut Criterion) {
-    let markov = Markov::new();
+    let markov = Markov::new(Some(vec!["https://example.com/".to_string()]), 0.05);
 
     c.bench_function("gen_html", |b| b.iter(|| markov.gen_html()));
 

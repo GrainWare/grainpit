@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>grainpit_stats</title>
+    <style>
+      body {
+        background: black;
+        font-family: monospace;
+        color: white;
+      }
+
+      u {
+        text-underline-offset: 4px;
+      }
+
+      a {
+        color: lightblue;
+      }
+
+      pre {
+        white-space: pre-wrap;
+        white-space: -moz-pre-wrap;
+        white-space: -pre-wrap;
+        white-space: -o-pre-wrap;
+        word-wrap: break-word;
+      }
+    </style>
+  </head>
+  <body>
+    <pre>
+<b>grainpit_stats</b>
+<u>statistics on grainpit instances</u>
+
+<b>ips in database:</b> {{ ips }}
+<b>user agents in database:</b> {{ user_agents }}
+<b>total number of requests:</b> {{ requests }}
+<b>grainpit url count:</b> {{ grainpit_urls }}
+
+<a href="https://github.com/GrainWare/grainpit">host a grainpit instance today</a>
+
+<a href="/account">add grainpit urls</a>
+</pre>
+  </body>
+</html>
