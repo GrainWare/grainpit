@@ -1,4 +1,4 @@
-use std::net::SocketAddr;
+use std::net::{IpAddr, SocketAddr};
 use std::str::FromStr;
 use std::sync::{Arc, Mutex};
 
@@ -133,23 +133,24 @@ async fn main() {
     .unwrap();
 }
 
-async fn wildcard_handler(
-    State(state): State<Arc<AppState>>,
-    TypedHeader(user_agent): TypedHeader<UserAgent>,
-    ClientIp(ip): ClientIp,
-    Path(path): Path<String>,
-) -> Response {
+async fn submit_stats(state: &AppState, user_agent: &UserAgent, ip: IpAddr, url: String) {
     if let Some(stats) = &state.stats {
-        stats.stats_queue.lock().unwrap().push(Request {
-            time: chrono::Utc::now(),
-            url: ("/".to_owned() + &path).to_string(),
-            ip: ipnet::IpNet::new(ip, if ip.is_ipv4() { 32 } else { 128 }).unwrap(),
-            user_agent: user_agent.to_string(),
-        });
-        if stats.stats_queue.lock().unwrap().len() >= 1024 {
-            let submission = Submission::new(stats.stats_queue.lock().unwrap().to_vec())
-                .serialize()
-                .unwrap();
+        let submission = {
+            let mut queue = stats.stats_queue.lock().unwrap();
+            queue.push(Request {
+                time: chrono::Utc::now(),
+                url,
+                ip: ipnet::IpNet::new(ip, if ip.is_ipv4() { 32 } else { 128 }).unwrap(),
+                user_agent: user_agent.to_string(),
+            });
+            if queue.len() >= 1024 {
+                let batch = std::mem::take(&mut *queue);
+                Some(Submission::new(batch).serialize().unwrap())
+            } else {
+                None
+            }
+        };
+        if let Some(submission) = submission {
             let client = reqwest::Client::new();
             let _res = client
                 .post(format!("{}api/submit", stats.stats_url))
@@ -158,9 +159,17 @@ async fn wildcard_handler(
                 .send()
                 .await
                 .map_err(|e| error!("{:?}", e));
-            *stats.stats_queue.lock().unwrap() = Vec::new();
         }
     }
+}
+
+async fn wildcard_handler(
+    State(state): State<Arc<AppState>>,
+    TypedHeader(user_agent): TypedHeader<UserAgent>,
+    ClientIp(ip): ClientIp,
+    Path(path): Path<String>,
+) -> Response {
+    submit_stats(&state, &user_agent, ip, ("/".to_owned() + &path).to_string()).await;
 
     if path.contains(".html") {
         Html(state.m.gen_html()).into_response()
@@ -181,28 +190,7 @@ async fn handler(
     TypedHeader(user_agent): TypedHeader<UserAgent>,
     ClientIp(ip): ClientIp,
 ) -> Html<String> {
-    if let Some(stats) = &state.stats {
-        stats.stats_queue.lock().unwrap().push(Request {
-            time: chrono::Utc::now(),
-            url: "/".to_string(),
-            ip: ipnet::IpNet::new(ip, if ip.is_ipv4() { 32 } else { 128 }).unwrap(),
-            user_agent: user_agent.to_string(),
-        });
-        if stats.stats_queue.lock().unwrap().len() >= 1024 {
-            let submission = Submission::new(stats.stats_queue.lock().unwrap().to_vec())
-                .serialize()
-                .unwrap();
-            let client = reqwest::Client::new();
-            let _res = client
-                .post(format!("{}api/submit", stats.stats_url))
-                .header("Authorization", stats.stats_key.clone())
-                .body(submission)
-                .send()
-                .await
-                .map_err(|e| error!("{:?}", e));
-            *stats.stats_queue.lock().unwrap() = Vec::new();
-        }
-    }
+    submit_stats(&state, &user_agent, ip, "/".to_string()).await;
 
     Html(state.m.gen_html())
 }
