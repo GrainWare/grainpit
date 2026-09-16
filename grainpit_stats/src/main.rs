@@ -39,6 +39,7 @@ async fn main() {
         .route("/auth", get(routes::auth::auth))
         .route("/account", get(routes::account::account))
         .route("/admin", get(routes::account::admin))
+        .route("/blocklist.txt", get(routes::blocklist::blocklist))
         .route(
             "/api/edit_grainpit_urls",
             post(routes::api::edit_grainpit_urls::edit_grainpit_urls),
